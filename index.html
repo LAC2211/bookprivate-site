@@ -3,530 +3,92 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BookPrivate — Private Healthcare Appointments. Seen Faster.</title>
-<meta name="description" content="BookPrivate connects you with independent private clinics for fast, affordable appointments. No NHS waiting list. Physiotherapy, diagnostics, ADHD assessments and more across Greater Manchester.">
+
+<!-- ── SEO: title + description (shown in Google search results) ── -->
+<title>BookPrivate — Private Healthcare Appointments in Manchester | No Waiting List</title>
+<meta name="description" content="Skip the NHS waiting list. Book a private physiotherapy, MSK scan or ADHD assessment in Greater Manchester within 48 hours. No GP referral needed.">
+<link rel="canonical" href="https://bookprivate.co.uk/">
+
+<!-- ── Open Graph: how this page looks when shared on social media ── -->
+<meta property="og:title" content="BookPrivate — Private Healthcare Appointments in Manchester">
+<meta property="og:description" content="Skip the NHS waiting list. Book a private physiotherapy, MSK scan or ADHD assessment in Greater Manchester within 48 hours.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://bookprivate.co.uk/">
+<meta property="og:site_name" content="BookPrivate">
+<!-- Add an og:image (1200x630px) here once you have a logo/hero graphic:
+<meta property="og:image" content="https://bookprivate.co.uk/og-image.jpg"> -->
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<link rel="stylesheet" href="css/style.css">
 
-  :root {
-    --teal: #0D9488;
-    --teal-pale: #F0FDFA;
-    --teal-mid: #CCFBF1;
-    --orange: #F97316;
-    --orange-pale: #FFF7ED;
-    --ink: #111827;
-    --ink-soft: #374151;
-    --ink-muted: #6B7280;
-    --rule: #E5E7EB;
-    --white: #ffffff;
-    --max: 760px;
+<!-- ── Structured data: helps Google understand what BookPrivate is ──
+     Edit the phone number / address once you have real business
+     details, and add these two blocks to other pages if you want. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "MedicalBusiness",
+  "name": "BookPrivate",
+  "alternateName": "ClinScale Ltd",
+  "url": "https://bookprivate.co.uk",
+  "email": "hello@bookprivate.co.uk",
+  "description": "BookPrivate connects patients with independent private healthcare clinics for fast appointments in Greater Manchester, including physiotherapy, MSK scans and ADHD assessments.",
+  "areaServed": {
+    "@type": "City",
+    "name": "Greater Manchester"
+  },
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Manchester",
+    "addressRegion": "Greater Manchester",
+    "addressCountry": "GB"
+  },
+  "priceRange": "££"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "BookPrivate",
+  "url": "https://bookprivate.co.uk",
+  "email": "hello@bookprivate.co.uk",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Manchester",
+    "addressRegion": "Greater Manchester",
+    "addressCountry": "GB"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": 53.4808,
+    "longitude": -2.2426
+  },
+  "openingHoursSpecification": {
+    "@type": "OpeningHoursSpecification",
+    "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+    "opens": "09:00",
+    "closes": "17:30"
   }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    font-family: 'Inter', sans-serif;
-    background: var(--white);
-    color: var(--ink);
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  /* ── NAV ── */
-  nav {
-    padding: 20px 32px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid var(--rule);
-  }
-
-  .logo {
-    font-size: 20px;
-    font-weight: 800;
-    letter-spacing: -0.5px;
-    text-decoration: none;
-  }
-  .logo-book { color: var(--teal); }
-  .logo-private { color: var(--orange); }
-
-  .nav-badge {
-    font-size: 12px;
-    font-weight: 600;
-    background: var(--orange-pale);
-    color: var(--orange);
-    padding: 6px 14px;
-    border-radius: 20px;
-    border: 1px solid #FED7AA;
-  }
-
-  /* ── HERO ── */
-  .hero {
-    background: var(--ink);
-    color: var(--white);
-    padding: 96px 32px 80px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .hero::before {
-    content: '';
-    position: absolute;
-    top: -40%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 600px;
-    height: 600px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(13,148,136,0.15) 0%, transparent 70%);
-    pointer-events: none;
-  }
-
-  .hero-inner {
-    max-width: var(--max);
-    margin: 0 auto;
-    position: relative;
-  }
-
-  .hero-pill {
-    display: inline-block;
-    background: rgba(13,148,136,0.15);
-    border: 1px solid rgba(13,148,136,0.3);
-    color: #5EEAD4;
-    font-size: 13px;
-    font-weight: 600;
-    padding: 6px 16px;
-    border-radius: 20px;
-    margin-bottom: 28px;
-    letter-spacing: 0.02em;
-  }
-
-  .hero h1 {
-    font-size: clamp(40px, 6vw, 68px);
-    font-weight: 900;
-    line-height: 1.05;
-    letter-spacing: -2px;
-    color: var(--white);
-    margin-bottom: 8px;
-  }
-
-  .hero h1 .accent {
-    color: var(--orange);
-  }
-
-  .hero-tagline {
-    font-size: clamp(18px, 2.5vw, 24px);
-    font-weight: 700;
-    color: var(--teal);
-    margin-bottom: 24px;
-    letter-spacing: -0.3px;
-  }
-
-  .hero-sub {
-    font-size: 17px;
-    color: rgba(255,255,255,0.65);
-    line-height: 1.65;
-    max-width: 520px;
-    margin: 0 auto 48px;
-    font-weight: 400;
-  }
-
-  .hero-form {
-    display: flex;
-    gap: 12px;
-    max-width: 460px;
-    margin: 0 auto 24px;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .hero-input {
-    flex: 1;
-    min-width: 200px;
-    padding: 14px 18px;
-    border-radius: 8px;
-    border: 1.5px solid rgba(255,255,255,0.15);
-    background: rgba(255,255,255,0.07);
-    color: var(--white);
-    font-family: 'Inter', sans-serif;
-    font-size: 15px;
-    outline: none;
-    transition: border-color 0.15s;
-  }
-  .hero-input::placeholder { color: rgba(255,255,255,0.35); }
-  .hero-input:focus { border-color: var(--teal); }
-
-  .hero-btn {
-    background: var(--orange);
-    color: var(--white);
-    border: none;
-    padding: 14px 24px;
-    border-radius: 8px;
-    font-family: 'Inter', sans-serif;
-    font-size: 15px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: opacity 0.15s;
-    white-space: nowrap;
-  }
-  .hero-btn:hover { opacity: 0.88; }
-
-  .hero-note {
-    font-size: 13px;
-    color: rgba(255,255,255,0.4);
-  }
-
-  /* ── STATS STRIP ── */
-  .stats-strip {
-    background: var(--teal-pale);
-    border-top: 1px solid var(--teal-mid);
-    border-bottom: 1px solid var(--teal-mid);
-    padding: 32px;
-  }
-
-  .stats-inner {
-    max-width: var(--max);
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    gap: 24px;
-    flex-wrap: wrap;
-  }
-
-  .stat {
-    text-align: center;
-    flex: 1;
-    min-width: 140px;
-  }
-
-  .stat-number {
-    font-size: 28px;
-    font-weight: 800;
-    color: var(--teal);
-    letter-spacing: -0.8px;
-    line-height: 1;
-    margin-bottom: 6px;
-  }
-
-  .stat-label {
-    font-size: 13px;
-    color: var(--ink-soft);
-    line-height: 1.4;
-  }
-
-  /* ── HOW IT WORKS ── */
-  .how-section {
-    max-width: var(--max);
-    margin: 0 auto;
-    padding: 80px 32px;
-  }
-
-  .how-section h2 {
-    font-size: clamp(26px, 3.5vw, 36px);
-    font-weight: 800;
-    letter-spacing: -0.8px;
-    margin-bottom: 48px;
-    line-height: 1.2;
-  }
-
-  .steps {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
-
-  .step {
-    display: grid;
-    grid-template-columns: 48px 1fr;
-    gap: 24px;
-    padding: 32px 0;
-    border-top: 1px solid var(--rule);
-    align-items: start;
-  }
-
-  .step:last-child { border-bottom: 1px solid var(--rule); }
-
-  .step-marker {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: 2px solid var(--teal);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 15px;
-    font-weight: 800;
-    color: var(--teal);
-    flex-shrink: 0;
-    margin-top: 2px;
-  }
-
-  .step-title {
-    font-size: 17px;
-    font-weight: 700;
-    margin-bottom: 6px;
-    color: var(--ink);
-  }
-
-  .step-desc {
-    font-size: 15px;
-    color: var(--ink-soft);
-    line-height: 1.6;
-  }
-
-  /* ── SERVICES ── */
-  .services-section {
-    background: var(--ink);
-    padding: 80px 32px;
-  }
-
-  .services-inner {
-    max-width: var(--max);
-    margin: 0 auto;
-  }
-
-  .services-section h2 {
-    font-size: clamp(26px, 3.5vw, 36px);
-    font-weight: 800;
-    letter-spacing: -0.8px;
-    margin-bottom: 12px;
-    color: var(--white);
-    line-height: 1.2;
-  }
-
-  .services-intro {
-    font-size: 16px;
-    color: rgba(255,255,255,0.55);
-    margin-bottom: 48px;
-    max-width: 480px;
-    line-height: 1.6;
-  }
-
-  .service-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 2px;
-    background: rgba(255,255,255,0.06);
-  }
-
-  .service-card {
-    background: var(--ink);
-    padding: 32px 28px;
-  }
-
-  .service-card-name {
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--white);
-    margin-bottom: 8px;
-  }
-
-  .service-card-desc {
-    font-size: 14px;
-    color: rgba(255,255,255,0.5);
-    line-height: 1.6;
-    margin-bottom: 16px;
-  }
-
-  .service-card-tag {
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--teal);
-    letter-spacing: 0.05em;
-  }
-
-  .service-card-tag.soon {
-    color: rgba(255,255,255,0.3);
-  }
-
-  /* ── BLOG PLACEHOLDER ── */
-  .blog-section {
-    max-width: var(--max);
-    margin: 0 auto;
-    padding: 80px 32px;
-  }
-
-  .blog-section h2 {
-    font-size: clamp(26px, 3.5vw, 36px);
-    font-weight: 800;
-    letter-spacing: -0.8px;
-    margin-bottom: 12px;
-    line-height: 1.2;
-  }
-
-  .blog-intro {
-    font-size: 16px;
-    color: var(--ink-soft);
-    margin-bottom: 40px;
-    line-height: 1.6;
-  }
-
-  .blog-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 24px;
-  }
-
-  .blog-card {
-    border: 1px solid var(--rule);
-    border-radius: 10px;
-    padding: 28px 24px;
-    text-decoration: none;
-    color: inherit;
-    transition: border-color 0.15s;
-    display: block;
-  }
-
-  .blog-card:hover { border-color: var(--teal); }
-
-  .blog-tag {
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--teal);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-bottom: 12px;
-    display: block;
-  }
-
-  .blog-title {
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--ink);
-    line-height: 1.4;
-    margin-bottom: 10px;
-  }
-
-  .blog-excerpt {
-    font-size: 13px;
-    color: var(--ink-muted);
-    line-height: 1.55;
-  }
-
-  .blog-coming {
-    display: inline-block;
-    margin-top: 16px;
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--ink-muted);
-    background: #F3F4F6;
-    padding: 4px 10px;
-    border-radius: 4px;
-  }
-
-  /* ── CTA BANNER ── */
-  .cta-section {
-    background: var(--teal);
-    padding: 72px 32px;
-    text-align: center;
-  }
-
-  .cta-inner {
-    max-width: 520px;
-    margin: 0 auto;
-  }
-
-  .cta-section h2 {
-    font-size: clamp(28px, 4vw, 42px);
-    font-weight: 900;
-    letter-spacing: -1px;
-    color: var(--white);
-    margin-bottom: 16px;
-    line-height: 1.1;
-  }
-
-  .cta-sub {
-    font-size: 17px;
-    color: rgba(255,255,255,0.75);
-    margin-bottom: 36px;
-    line-height: 1.6;
-  }
-
-  .cta-form {
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .cta-input {
-    flex: 1;
-    min-width: 200px;
-    max-width: 280px;
-    padding: 14px 18px;
-    border-radius: 8px;
-    border: none;
-    font-family: 'Inter', sans-serif;
-    font-size: 15px;
-    outline: none;
-    background: rgba(255,255,255,0.9);
-    color: var(--ink);
-  }
-  .cta-input::placeholder { color: var(--ink-muted); }
-
-  .cta-btn {
-    background: var(--ink);
-    color: var(--white);
-    border: none;
-    padding: 14px 24px;
-    border-radius: 8px;
-    font-family: 'Inter', sans-serif;
-    font-size: 15px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: opacity 0.15s;
-  }
-  .cta-btn:hover { opacity: 0.85; }
-
-  /* ── FOOTER ── */
-  footer {
-    border-top: 1px solid var(--rule);
-    padding: 28px 32px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-
-  .footer-brand {
-    font-size: 14px;
-    font-weight: 800;
-    text-decoration: none;
-  }
-
-  .footer-meta {
-    font-size: 12px;
-    color: var(--ink-muted);
-    line-height: 1.5;
-    text-align: right;
-  }
-
-  @media (max-width: 600px) {
-    nav { padding: 16px 20px; }
-    .hero { padding: 64px 20px 56px; }
-    .stats-strip { padding: 28px 20px; }
-    .how-section, .blog-section { padding: 60px 20px; }
-    .services-section { padding: 60px 20px; }
-    .cta-section { padding: 56px 20px; }
-    footer { padding: 20px; flex-direction: column; align-items: flex-start; }
-    .footer-meta { text-align: left; }
-    .step { grid-template-columns: 40px 1fr; gap: 16px; }
-    .stats-inner { justify-content: flex-start; }
-  }
-</style>
+}
+</script>
 </head>
 <body>
 
 <!-- NAV -->
 <nav>
-  <a href="#" class="logo">
+  <a href="/" class="logo">
     <span class="logo-book">Book</span><span class="logo-private">Private</span>
   </a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="#how-it-works">How it works</a>
+    <a href="#services">Services</a>
+    <a href="/blog/">Blog</a>
+    <a href="/clinics/">For Clinics</a>
+  </div>
   <span class="nav-badge">Launching soon — Manchester</span>
 </nav>
 
@@ -534,15 +96,57 @@
 <section class="hero">
   <div class="hero-inner">
     <span class="hero-pill">Private healthcare. No waiting list.</span>
-    <h1>Seen <span class="accent">faster.</span><br>Treated better.</h1>
-    <p class="hero-tagline">Book a private appointment. This week.</p>
-    <p class="hero-sub">Tired of waiting months for an NHS appointment? BookPrivate connects you with independent private clinics across Greater Manchester — fast, affordable, and on your terms.</p>
 
-    <form class="hero-form" onsubmit="handleRegister(event, 'hero')">
-      <input type="email" class="hero-input" placeholder="Your email address" required>
-      <button type="submit" class="hero-btn">Register interest</button>
-    </form>
-    <p class="hero-note">Be first to know when we launch. No spam.</p>
+    <!-- This is the page's one and only H1 — the main heading for SEO -->
+    <h1>Seen <span class="accent">faster.</span> Treated better.</h1>
+    <p class="hero-sub">Private healthcare appointments in Manchester. No waiting list. Skip the NHS queue — book a private physiotherapy, scan, or specialist appointment this week.</p>
+
+    <!-- REGISTRATION FORM #1 (hero) -->
+    <div class="form-wrapper on-dark">
+      <form class="reg-form on-dark" onsubmit="handleRegister(event, 'hero')">
+        <div class="field-full">
+          <label for="hero-fullName">Full name</label>
+          <input id="hero-fullName" name="fullName" type="text" placeholder="Jane Smith" required>
+        </div>
+        <div>
+          <label for="hero-email">Email address</label>
+          <input id="hero-email" name="email" type="email" placeholder="you@example.com" required>
+        </div>
+        <div>
+          <label for="hero-phone">Phone number</label>
+          <input id="hero-phone" name="phone" type="tel" placeholder="07123 456789" required>
+        </div>
+        <div>
+          <label for="hero-appointmentType">Appointment needed</label>
+          <select id="hero-appointmentType" name="appointmentType" required>
+            <option value="" disabled selected>Choose one</option>
+            <option value="Physiotherapy">Physiotherapy</option>
+            <option value="MSK Scan">MSK Scan</option>
+            <option value="ADHD Assessment">ADHD Assessment</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div>
+          <label for="hero-postcode">Postcode</label>
+          <input id="hero-postcode" name="postcode" type="text" placeholder="M1 4BT" required>
+        </div>
+        <div class="field-full">
+          <label for="hero-timeframe">Preferred timeframe</label>
+          <select id="hero-timeframe" name="timeframe" required>
+            <option value="" disabled selected>Choose one</option>
+            <option value="This week">This week</option>
+            <option value="Within 2 weeks">Within 2 weeks</option>
+            <option value="Within a month">Within a month</option>
+          </select>
+        </div>
+        <button type="submit" class="form-submit-btn">Register interest</button>
+      </form>
+      <div class="thank-you-message">
+        <h3>Thanks — you're on the list</h3>
+        <p>We've saved your details and opened an email to hello@bookprivate.co.uk to confirm. We'll be in touch as soon as we launch in your area.</p>
+      </div>
+      <p class="form-note">Be first to know when we launch. No spam.</p>
+    </div>
   </div>
 </section>
 
@@ -550,100 +154,92 @@
 <div class="stats-strip">
   <div class="stats-inner">
     <div class="stat">
-      <div class="stat-number">7.6m</div>
-      <div class="stat-label">People on NHS waiting lists in England</div>
+      <div class="stat-number">16,124</div>
+      <div class="stat-label">Patients waiting for NHS MSK physiotherapy in Greater Manchester</div>
     </div>
     <div class="stat">
-      <div class="stat-number">18 wks</div>
-      <div class="stat-label">Average NHS physio wait in Greater Manchester</div>
+      <div class="stat-number">25,000+</div>
+      <div class="stat-label">Adults waiting for an ADHD assessment</div>
     </div>
     <div class="stat">
       <div class="stat-number">48 hrs</div>
-      <div class="stat-label">Typical wait with BookPrivate clinic partners</div>
+      <div class="stat-label">Typical wait to be seen with BookPrivate clinic partners</div>
     </div>
   </div>
 </div>
 
 <!-- HOW IT WORKS -->
-<section class="how-section">
+<section class="how-section" id="how-it-works">
   <h2>How BookPrivate works</h2>
   <div class="steps">
     <div class="step">
       <div class="step-marker">1</div>
       <div>
-        <div class="step-title">Tell us what you need</div>
-        <div class="step-desc">Search by location and service type. Physiotherapy, MSK and diagnostic scans, ADHD assessments, and more. No GP referral required for most services.</div>
+        <h3 class="step-title">Search</h3>
+        <p class="step-desc">Tell us what you need. Search by location and service type — physiotherapy, MSK scans, ADHD assessments, and more. No GP referral required for most services.</p>
       </div>
     </div>
     <div class="step">
       <div class="step-marker">2</div>
       <div>
-        <div class="step-title">Choose your clinic</div>
-        <div class="step-desc">Browse independent private clinics near you. See real availability, transparent pricing, and practitioner profiles. All clinics are verified and professionally qualified.</div>
+        <h3 class="step-title">Book</h3>
+        <p class="step-desc">Browse independent private clinics near you. See real availability, transparent pricing, and practitioner profiles. All clinics are verified and professionally qualified.</p>
       </div>
     </div>
     <div class="step">
       <div class="step-marker">3</div>
       <div>
-        <div class="step-title">Book and be seen</div>
-        <div class="step-desc">Confirm your appointment in minutes. Most of our clinic partners have availability within 48 hours. No waiting rooms, no referral letters, no months of uncertainty.</div>
+        <h3 class="step-title">Be seen</h3>
+        <p class="step-desc">Confirm your appointment in minutes. Most of our clinic partners have availability within 48 hours. No waiting rooms, no referral letters, no months of uncertainty.</p>
       </div>
     </div>
   </div>
 </section>
 
 <!-- SERVICES -->
-<section class="services-section">
+<section class="services-section" id="services">
   <div class="services-inner">
     <h2>What you can book</h2>
     <p class="services-intro">Starting in Greater Manchester. Expanding across the UK.</p>
     <div class="service-grid">
       <div class="service-card">
-        <div class="service-card-name">Physiotherapy</div>
-        <div class="service-card-desc">MSK, sports injury, post-surgical rehabilitation, and general physio. Independent clinics with experienced practitioners across Altrincham, Stockport, Sale, and Didsbury.</div>
+        <h3 class="service-card-name">Physiotherapy</h3>
+        <p class="service-card-desc">MSK, sports injury, post-surgical rehabilitation, and general physio. Independent clinics with experienced practitioners across Altrincham, Stockport, Sale, and Didsbury.</p>
         <span class="service-card-tag">● Launching soon</span>
       </div>
       <div class="service-card">
-        <div class="service-card-name">Diagnostic Scans</div>
-        <div class="service-card-desc">MSK ultrasound, soft tissue assessment, and diagnostic imaging. Fast access without a GP referral. Know what is wrong and start treatment sooner.</div>
+        <h3 class="service-card-name">MSK Scans</h3>
+        <p class="service-card-desc">MSK ultrasound, soft tissue assessment, and diagnostic imaging. Fast access without a GP referral. Know what is wrong and start treatment sooner.</p>
         <span class="service-card-tag soon">◌ Coming soon</span>
       </div>
       <div class="service-card">
-        <div class="service-card-name">ADHD Assessment</div>
-        <div class="service-card-desc">Private ADHD assessment and diagnosis for adults and children. NHS waiting lists for ADHD assessment currently exceed three years in many areas.</div>
+        <h3 class="service-card-name">ADHD Assessment</h3>
+        <p class="service-card-desc">Private ADHD assessment and diagnosis for adults and children. NHS waiting lists for ADHD assessment currently exceed three years in many areas.</p>
         <span class="service-card-tag soon">◌ Coming soon</span>
-      </div>
-      <div class="service-card">
-        <div class="service-card-name">More specialisms</div>
-        <div class="service-card-desc">We are building relationships with independent clinics across multiple specialisms. Register your interest and tell us what you need — it helps us prioritise.</div>
-        <span class="service-card-tag soon">◌ Tell us what you need</span>
       </div>
     </div>
   </div>
 </section>
 
-<!-- BLOG PLACEHOLDER -->
+<!-- BLOG TEASER -->
 <section class="blog-section">
   <h2>Private healthcare — plain English</h2>
   <p class="blog-intro">Guides, explainers, and honest information about accessing private healthcare in the UK. No jargon. No pressure.</p>
   <div class="blog-grid">
-    <a href="#" class="blog-card">
+    <a href="/blog/private-physio-cost-manchester-2026.html" class="blog-card">
       <span class="blog-tag">Guide</span>
-      <div class="blog-title">How much does private physiotherapy actually cost in Manchester?</div>
+      <div class="blog-title">How much does private physiotherapy cost in Manchester in 2026?</div>
       <div class="blog-excerpt">A transparent breakdown of what you should expect to pay, what is included, and where the value genuinely lies compared to NHS treatment.</div>
-      <span class="blog-coming">Coming soon</span>
     </a>
-    <a href="#" class="blog-card">
+    <a href="/blog/gp-referral-private-appointment.html" class="blog-card">
       <span class="blog-tag">Explainer</span>
       <div class="blog-title">Do I need a GP referral for a private appointment?</div>
       <div class="blog-excerpt">Most people assume they do. Most people are wrong. Here is what you actually need to access private physiotherapy, scans, and specialist consultations.</div>
-      <span class="blog-coming">Coming soon</span>
     </a>
-    <a href="#" class="blog-card">
+    <a href="/blog/nhs-physio-waiting-times-greater-manchester.html" class="blog-card">
       <span class="blog-tag">NHS waiting lists</span>
-      <div class="blog-title">NHS physiotherapy waits in Greater Manchester — what the data shows</div>
+      <div class="blog-title">NHS physiotherapy waiting times in Greater Manchester — the data</div>
       <div class="blog-excerpt">Current waiting times across Manchester, Stockport, Trafford, and Salford. And what your options are if you cannot wait.</div>
-      <span class="blog-coming">Coming soon</span>
     </a>
   </div>
 </section>
@@ -653,16 +249,58 @@
   <div class="cta-inner">
     <h2>Stop waiting. Start recovering.</h2>
     <p class="cta-sub">BookPrivate is launching in Greater Manchester soon. Register now to be first in line when we go live — and tell us what appointments you need most.</p>
-    <form class="cta-form" onsubmit="handleRegister(event, 'cta')">
-      <input type="email" class="cta-input" placeholder="Your email address" required>
-      <button type="submit" class="cta-btn">Register interest</button>
-    </form>
+
+    <!-- REGISTRATION FORM #2 (bottom CTA) -->
+    <div class="form-wrapper on-teal">
+      <form class="reg-form on-teal" onsubmit="handleRegister(event, 'cta')">
+        <div class="field-full">
+          <label for="cta-fullName">Full name</label>
+          <input id="cta-fullName" name="fullName" type="text" placeholder="Jane Smith" required>
+        </div>
+        <div>
+          <label for="cta-email">Email address</label>
+          <input id="cta-email" name="email" type="email" placeholder="you@example.com" required>
+        </div>
+        <div>
+          <label for="cta-phone">Phone number</label>
+          <input id="cta-phone" name="phone" type="tel" placeholder="07123 456789" required>
+        </div>
+        <div>
+          <label for="cta-appointmentType">Appointment needed</label>
+          <select id="cta-appointmentType" name="appointmentType" required>
+            <option value="" disabled selected>Choose one</option>
+            <option value="Physiotherapy">Physiotherapy</option>
+            <option value="MSK Scan">MSK Scan</option>
+            <option value="ADHD Assessment">ADHD Assessment</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div>
+          <label for="cta-postcode">Postcode</label>
+          <input id="cta-postcode" name="postcode" type="text" placeholder="M1 4BT" required>
+        </div>
+        <div class="field-full">
+          <label for="cta-timeframe">Preferred timeframe</label>
+          <select id="cta-timeframe" name="timeframe" required>
+            <option value="" disabled selected>Choose one</option>
+            <option value="This week">This week</option>
+            <option value="Within 2 weeks">Within 2 weeks</option>
+            <option value="Within a month">Within a month</option>
+          </select>
+        </div>
+        <button type="submit" class="form-submit-btn">Register interest</button>
+      </form>
+      <div class="thank-you-message">
+        <h3>Thanks — you're on the list</h3>
+        <p>We've saved your details and opened an email to hello@bookprivate.co.uk to confirm. We'll be in touch as soon as we launch in your area.</p>
+      </div>
+    </div>
   </div>
 </section>
 
 <!-- FOOTER -->
 <footer>
-  <a href="#" class="footer-brand">
+  <a href="/" class="footer-brand">
     <span class="logo-book">Book</span><span class="logo-private">Private</span>
   </a>
   <div class="footer-meta">
@@ -671,20 +309,6 @@
   </div>
 </footer>
 
-<script>
-  function handleRegister(e, source) {
-    e.preventDefault();
-    const form = e.target;
-    const email = form.querySelector('input[type="email"]').value;
-    const btn = form.querySelector('button');
-    btn.textContent = 'Registered — thank you';
-    btn.disabled = true;
-    btn.style.opacity = '0.7';
-    form.querySelector('input').disabled = true;
-    // In production connect to your email capture (Mailchimp, ConvertKit, etc)
-    console.log('Registration:', email, 'from:', source);
-  }
-</script>
-
+<script src="js/main.js"></script>
 </body>
 </html>

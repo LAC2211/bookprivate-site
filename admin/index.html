@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — BookPrivate</title>
+<!-- Keep this page out of Google entirely -->
+<meta name="robots" content="noindex, nofollow">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="/" class="logo"><span class="logo-book">Book</span><span class="logo-private">Private</span></a>
+  <span class="nav-badge">Admin</span>
+</nav>
+
+<!-- LOGIN SCREEN -->
+<div class="admin-login" id="loginScreen">
+  <div class="admin-login-card">
+    <h1>Admin login</h1>
+    <form onsubmit="checkLogin(event)">
+      <p class="admin-error" id="loginError">Incorrect password. Try again.</p>
+      <input type="password" id="adminPassword" placeholder="Password" required autofocus>
+      <button type="submit">Log in</button>
+    </form>
+  </div>
+</div>
+
+<!-- DASHBOARD (hidden until logged in) -->
+<div class="admin-dashboard" id="dashboard">
+  <div class="admin-header">
+    <h1>BookPrivate admin</h1>
+    <button class="admin-logout-btn" onclick="logout()">Log out</button>
+  </div>
+
+  <!-- ADD NEW ARTICLE -->
+  <div class="admin-panel">
+    <h2>Add a new blog article</h2>
+    <form class="admin-form-grid" onsubmit="handleNewArticle(event)">
+      <div class="field-full">
+        <label for="art-title">Title</label>
+        <input id="art-title" name="title" type="text" placeholder="How much does private physiotherapy cost?" required>
+      </div>
+      <div>
+        <label for="art-slug">URL slug (leave blank to auto-generate)</label>
+        <input id="art-slug" name="slug" type="text" placeholder="private-physio-cost-manchester">
+      </div>
+      <div>
+        <label for="art-date">Date</label>
+        <input id="art-date" name="date" type="text" placeholder="e.g. 3 February 2026" required>
+      </div>
+      <div>
+        <label for="art-category">Category</label>
+        <input id="art-category" name="category" type="text" placeholder="Guide / Explainer / NHS waiting lists" required>
+      </div>
+      <div>
+        <label for="art-excerpt">Excerpt (used for previews and SEO description)</label>
+        <input id="art-excerpt" name="excerpt" type="text" placeholder="A one or two sentence summary of the article" required>
+      </div>
+      <div class="field-full">
+        <label for="art-content">Full article content (separate paragraphs with a blank line)</label>
+        <textarea id="art-content" name="content" placeholder="Write the full article here. Leave a blank line between paragraphs." required></textarea>
+      </div>
+      <button type="submit" class="admin-submit-btn">Generate article HTML</button>
+    </form>
+
+    <div class="generated-html-wrapper" id="generatedHtmlWrapper">
+      <label>Copy this into a new file at /blog/&lt;slug&gt;.html</label>
+      <textarea id="generatedHtml" readonly onclick="this.select()"></textarea>
+    </div>
+  </div>
+
+  <!-- EXISTING ARTICLES -->
+  <div class="admin-panel">
+    <h2>Articles added from this dashboard</h2>
+    <div id="articlesList"></div>
+  </div>
+
+  <!-- HOMEPAGE REGISTRATIONS -->
+  <div class="admin-panel">
+    <h2>Homepage registration submissions</h2>
+    <div id="submissionsList"></div>
+  </div>
+</div>
+
+<script src="../js/admin.js"></script>
+</body>
+</html>
