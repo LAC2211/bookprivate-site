@@ -25,8 +25,9 @@
   <div class="admin-login-card">
     <h1>Admin login</h1>
     <form onsubmit="checkLogin(event)">
-      <p class="admin-error" id="loginError">Incorrect password. Try again.</p>
-      <input type="password" id="adminPassword" placeholder="Password" required autofocus>
+      <p class="admin-error" id="loginError">Incorrect username or password. Try again.</p>
+      <input type="text" id="adminUsername" placeholder="Username" autocomplete="username" required autofocus>
+      <input type="password" id="adminPassword" placeholder="Password" autocomplete="current-password" required>
       <button type="submit">Log in</button>
     </form>
   </div>
@@ -39,17 +40,50 @@
     <button class="admin-logout-btn" onclick="logout()">Log out</button>
   </div>
 
-  <!-- ADD NEW ARTICLE -->
+  <!-- SECTION 1 — SUMMARY STATS -->
+  <div class="admin-stats-grid">
+    <div class="admin-stat-card">
+      <div class="admin-stat-number" id="statTotal">0</div>
+      <div class="admin-stat-label">Total enquiries</div>
+    </div>
+    <div class="admin-stat-card">
+      <div class="admin-stat-number" id="statToday">0</div>
+      <div class="admin-stat-label">New today</div>
+    </div>
+    <div class="admin-stat-card">
+      <div class="admin-stat-number" id="statWeek">0</div>
+      <div class="admin-stat-label">This week</div>
+    </div>
+    <div class="admin-stat-card">
+      <div class="admin-stat-number" id="statContacted">0</div>
+      <div class="admin-stat-label">Marked contacted</div>
+    </div>
+  </div>
+
+  <!-- SECTION 2 & 3 — ENQUIRIES TABLE + EXPANDABLE DETAILS/NOTES -->
   <div class="admin-panel">
-    <h2>Add a new blog article</h2>
-    <form class="admin-form-grid" onsubmit="handleNewArticle(event)">
+    <h2>ADHD assessment enquiries</h2>
+    <p style="font-size:13px; color:var(--ink-muted); margin-bottom:16px;">Click the arrow on any row to see full answers and add private notes. Changing status saves automatically.</p>
+    <div id="enquiriesTableWrapper"></div>
+  </div>
+
+  <!-- SECTION 4 — BLOG MANAGEMENT -->
+  <div class="admin-panel" id="articlePanel">
+    <h2>Blog articles</h2>
+
+    <div class="admin-editing-note" id="editingNote">
+      You are editing an existing article. <a href="#" onclick="cancelEdit(); return false;" style="color:inherit; text-decoration:underline;">Cancel edit</a>
+    </div>
+
+    <form class="admin-form-grid" id="articleForm" onsubmit="handleArticleForm(event)">
+      <input type="hidden" name="editingId" value="">
       <div class="field-full">
         <label for="art-title">Title</label>
-        <input id="art-title" name="title" type="text" placeholder="How much does private physiotherapy cost?" required>
+        <input id="art-title" name="title" type="text" placeholder="How much does a private ADHD assessment cost?" required>
       </div>
       <div>
         <label for="art-slug">URL slug (leave blank to auto-generate)</label>
-        <input id="art-slug" name="slug" type="text" placeholder="private-physio-cost-manchester">
+        <input id="art-slug" name="slug" type="text" placeholder="adhd-assessment-cost-uk">
       </div>
       <div>
         <label for="art-date">Date</label>
@@ -67,25 +101,13 @@
         <label for="art-content">Full article content (separate paragraphs with a blank line)</label>
         <textarea id="art-content" name="content" placeholder="Write the full article here. Leave a blank line between paragraphs." required></textarea>
       </div>
-      <button type="submit" class="admin-submit-btn">Generate article HTML</button>
+      <button type="submit" class="admin-submit-btn">Save article</button>
     </form>
-
-    <div class="generated-html-wrapper" id="generatedHtmlWrapper">
-      <label>Copy this into a new file at /blog/&lt;slug&gt;.html</label>
-      <textarea id="generatedHtml" readonly onclick="this.select()"></textarea>
-    </div>
   </div>
 
-  <!-- EXISTING ARTICLES -->
   <div class="admin-panel">
-    <h2>Articles added from this dashboard</h2>
+    <h2>Existing articles</h2>
     <div id="articlesList"></div>
-  </div>
-
-  <!-- HOMEPAGE REGISTRATIONS -->
-  <div class="admin-panel">
-    <h2>Homepage registration submissions</h2>
-    <div id="submissionsList"></div>
   </div>
 </div>
 

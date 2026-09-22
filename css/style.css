@@ -136,8 +136,64 @@ nav {
   color: rgba(255,255,255,0.65);
   line-height: 1.65;
   max-width: 560px;
-  margin: 0 auto 48px;
+  margin: 0 auto 32px;
   font-weight: 400;
+}
+
+.hero-cta-btn {
+  display: inline-block;
+  background: var(--orange);
+  color: var(--white);
+  border: none;
+  padding: 16px 32px;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+.hero-cta-btn:hover { opacity: 0.88; }
+
+/* ── TRUST SIGNALS BAR ── */
+.trust-strip {
+  background: var(--teal-pale);
+  border-top: 1px solid var(--teal-mid);
+  border-bottom: 1px solid var(--teal-mid);
+  padding: 28px 32px;
+}
+
+.trust-inner {
+  max-width: var(--max);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.trust-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  line-height: 1.4;
+}
+
+.trust-item::before {
+  content: '✓';
+  color: var(--teal);
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+@media (max-width: 700px) {
+  .trust-inner { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 420px) {
+  .trust-inner { grid-template-columns: 1fr; }
 }
 
 /* ── REGISTRATION / CONTACT FORM (shared component) ──
@@ -238,6 +294,78 @@ nav {
 }
 .thank-you-message h3 { color: var(--teal); margin-bottom: 8px; font-size: 20px; }
 .thank-you-message p { color: var(--ink-soft); font-size: 15px; }
+
+/* ── ADHD ENQUIRY FORM SECTION ──
+   The main lead-capture form for the site. Styled as a clinical,
+   trustworthy card rather than a generic marketing contact form. */
+.enquiry-section {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 80px 32px;
+  scroll-margin-top: 24px;
+}
+
+.enquiry-section h2 {
+  font-size: clamp(26px, 3.5vw, 36px);
+  font-weight: 800;
+  letter-spacing: -0.8px;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.enquiry-intro {
+  font-size: 15px;
+  color: var(--ink-muted);
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.enquiry-card {
+  border: 1px solid var(--rule);
+  border-top: 4px solid var(--teal);
+  border-radius: 12px;
+  padding: 40px;
+  box-shadow: 0 4px 24px rgba(17, 24, 39, 0.05);
+}
+
+.checkbox-field {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: var(--teal-pale);
+  border: 1px solid var(--teal-mid);
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 4px;
+}
+
+.checkbox-field input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  accent-color: var(--teal);
+}
+
+.checkbox-field label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  margin-bottom: 0;
+  line-height: 1.5;
+}
+
+.form-reassurance {
+  grid-column: 1 / -1;
+  font-size: 13px;
+  color: var(--ink-muted);
+  text-align: center;
+  margin-top: 4px;
+}
+.form-reassurance::before {
+  content: '🔒 ';
+}
 
 /* ── STATS STRIP ── */
 .stats-strip {
@@ -342,6 +470,28 @@ nav {
 .service-card-tag { font-size: 11px; font-weight: 600; color: var(--teal); letter-spacing: 0.05em; }
 .service-card-tag.soon { color: rgba(255,255,255,0.3); }
 
+/* Featured card — used for the primary/active service (ADHD assessment) */
+.service-card.featured {
+  background: linear-gradient(180deg, rgba(13,148,136,0.14) 0%, var(--ink) 100%);
+  position: relative;
+  grid-column: 1 / -1;
+  padding: 36px 32px;
+}
+.service-card.featured .service-card-name { font-size: 20px; }
+.service-card.featured .service-card-desc { color: rgba(255,255,255,0.65); font-size: 15px; }
+.featured-badge {
+  display: inline-block;
+  background: var(--orange);
+  color: var(--white);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 20px;
+  margin-bottom: 14px;
+}
+
 /* ── BLOG (teaser cards on homepage + listing page) ── */
 .blog-section { max-width: var(--max); margin: 0 auto; padding: 80px 32px; }
 
@@ -410,6 +560,45 @@ nav {
 .article-body p { font-size: 16px; color: var(--ink-soft); margin-bottom: 20px; line-height: 1.75; }
 .article-body h2 { font-size: 22px; font-weight: 700; margin: 32px 0 12px; color: var(--ink); }
 .article-back { display: inline-block; margin-top: 40px; font-size: 14px; font-weight: 600; color: var(--teal); text-decoration: none; }
+
+/* ── FAQ ── */
+.faq-section { max-width: var(--max); margin: 0 auto; padding: 80px 32px; }
+.faq-section h2 {
+  font-size: clamp(26px, 3.5vw, 36px);
+  font-weight: 800;
+  letter-spacing: -0.8px;
+  margin-bottom: 40px;
+}
+
+.faq-item {
+  border-top: 1px solid var(--rule);
+  padding: 4px 0;
+}
+.faq-item:last-child { border-bottom: 1px solid var(--rule); }
+
+.faq-item summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 20px 32px 20px 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+  position: relative;
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::after {
+  content: '+';
+  position: absolute;
+  right: 0;
+  top: 18px;
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--teal);
+  transition: transform 0.15s;
+}
+.faq-item[open] summary::after { content: '−'; }
+
+.faq-answer { padding: 0 0 24px; font-size: 15px; color: var(--ink-soft); line-height: 1.7; }
 
 /* ── CTA BANNER ── */
 .cta-section { background: var(--teal); padding: 72px 32px; text-align: center; }
@@ -573,6 +762,110 @@ footer {
 
 .empty-state { font-size: 14px; color: var(--ink-muted); }
 
+/* Section 1 — summary stat cards */
+.admin-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.admin-stat-card {
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  padding: 20px;
+}
+.admin-stat-number { font-size: 28px; font-weight: 800; color: var(--teal); letter-spacing: -0.8px; margin-bottom: 4px; }
+.admin-stat-label { font-size: 12px; color: var(--ink-muted); font-weight: 600; }
+
+/* Section 2 — enquiries table with inline status + expandable rows */
+.status-select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1.5px solid var(--rule);
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  outline: none;
+  cursor: pointer;
+  background: var(--white);
+  color: var(--ink-soft);
+}
+.status-select:focus { border-color: var(--teal); }
+.status-select.status-New { color: #B45309; border-color: #FDE68A; background: #FFFBEB; }
+.status-select.status-Contacted { color: #1D4ED8; border-color: #BFDBFE; background: #EFF6FF; }
+.status-select.status-Appointment-booked { color: #15803D; border-color: #BBF7D0; background: #F0FDF4; }
+.status-select.status-Not-suitable { color: #B91C1C; border-color: #FECACA; background: #FEF2F2; }
+.status-select.status-No-response { color: var(--ink-muted); border-color: var(--rule); background: #F9FAFB; }
+
+.enquiry-row-toggle {
+  background: none;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  font-size: 14px;
+  color: var(--ink-soft);
+  cursor: pointer;
+  line-height: 1;
+}
+
+.enquiry-detail-row td {
+  background: #F9FAFB;
+  padding: 20px !important;
+}
+
+.enquiry-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.enquiry-detail-item { font-size: 13px; }
+.enquiry-detail-item .label { display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-muted); margin-bottom: 3px; }
+.enquiry-detail-item .value { color: var(--ink); }
+
+.enquiry-notes label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 6px; color: var(--ink-soft); }
+.enquiry-notes textarea {
+  width: 100%;
+  min-height: 90px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1.5px solid var(--rule);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  outline: none;
+  resize: vertical;
+}
+.enquiry-notes textarea:focus { border-color: var(--teal); }
+.enquiry-notes-saved { font-size: 11px; color: var(--teal); margin-top: 6px; opacity: 0; transition: opacity 0.2s; }
+.enquiry-notes-saved.show { opacity: 1; }
+
+/* Section 4 — blog management */
+.admin-edit-btn {
+  background: none;
+  border: 1.5px solid var(--rule);
+  color: var(--teal);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.admin-list-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.admin-editing-note {
+  display: none;
+  background: var(--orange-pale);
+  border: 1px solid #FED7AA;
+  color: var(--orange);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
 /* ── RESPONSIVE ── */
 @media (max-width: 600px) {
   nav { padding: 16px 20px; }
@@ -593,4 +886,9 @@ footer {
   .admin-form-grid { grid-template-columns: 1fr; }
   .admin-dashboard { padding: 32px 20px 72px; }
   .admin-panel { padding: 24px 20px; }
+  .enquiry-section { padding: 56px 20px; }
+  .enquiry-card { padding: 24px 20px; }
+  .faq-section { padding: 56px 20px; }
+  .faq-item summary { padding-right: 28px; }
+  .admin-stats-grid { grid-template-columns: 1fr 1fr; }
 }

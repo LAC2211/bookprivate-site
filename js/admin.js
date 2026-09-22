@@ -1,38 +1,55 @@
 /* ============================================================
    BOOKPRIVATE — ADMIN DASHBOARD SCRIPT
-   IMPORTANT: this is a simple client-side password gate, not
-   real security. The password below is visible to anyone who
-   views this file, and everything is stored in the browser's
-   own localStorage (not a shared database). That's fine for an
-   MVP run by one person, but before handling real patient data
-   this whole area should move to a proper backend with
-   server-side login.
+   IMPORTANT: this is a simple client-side login, not real
+   security. The credentials below are visible to anyone who
+   views this file's source, and everything (enquiries, notes,
+   articles) is stored in this browser's own localStorage — not
+   a shared database other devices can see. That's fine for a
+   solo-founder MVP, but before handling real patient data this
+   whole area should move to a proper backend with server-side
+   authentication.
 
-   Change the password here whenever you like:
+   Change the login credentials here whenever you like:
    ============================================================ */
+const ADMIN_USERNAME = 'admin';
 const ADMIN_PASSWORD = 'GrowPrivate2026';
 
-const SESSION_KEY = 'bookprivate_admin_session';
+const SESSION_KEY = 'bookprivate_admin_token';
+const ENQUIRIES_KEY = 'bookprivate_enquiries';
 const ARTICLES_KEY = 'bookprivate_articles';
-const SUBMISSIONS_KEY = 'bookprivate_submissions';
 
-// Escapes text before it's inserted as HTML, so a submission or
-// article containing "<" or "&" can't break the page layout.
+// Escapes text before it's inserted as HTML, so an enquiry or article
+// containing "<" or "&" can't break the page layout.
 function escapeHtml(str) {
   const div = document.createElement('div');
   div.textContent = str == null ? '' : String(str);
   return div.innerHTML;
 }
 
-/* ---------- Login ---------- */
+// Turns a status like "Appointment booked" into a CSS-safe class
+// suffix like "Appointment-booked" (matches the .status-select.status-*
+// colour rules in style.css).
+function statusToClass(status) {
+  return String(status).replace(/\s+/g, '-');
+}
+
+/* ============================================================
+   LOGIN / SESSION
+   ============================================================ */
 
 function checkLogin(event) {
   event.preventDefault();
-  const input = document.getElementById('adminPassword');
+  const username = document.getElementById('adminUsername').value.trim();
+  const password = document.getElementById('adminPassword').value;
   const error = document.getElementById('loginError');
 
-  if (input.value === ADMIN_PASSWORD) {
-    sessionStorage.setItem(SESSION_KEY, 'true');
+  if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+    // A simple per-tab session token. It doesn't need to be
+    // cryptographically meaningful — it just needs to exist so we
+    // know this tab has already logged in.
+    const token = 'session_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10);
+    sessionStorage.setItem(SESSION_KEY, token);
+    error.style.display = 'none';
     showDashboard();
   } else {
     error.style.display = 'block';
@@ -47,18 +64,169 @@ function logout() {
 function showDashboard() {
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('dashboard').style.display = 'block';
+  renderStats();
+  renderEnquiries();
   renderArticles();
-  renderSubmissions();
 }
 
-// Stay logged in for the rest of this browser tab session.
 document.addEventListener('DOMContentLoaded', function () {
-  if (sessionStorage.getItem(SESSION_KEY) === 'true') {
+  if (sessionStorage.getItem(SESSION_KEY)) {
     showDashboard();
   }
 });
 
-/* ---------- Articles ---------- */
+/* ============================================================
+   SECTION 1 — SUMMARY STATS
+   ============================================================ */
+
+function getEnquiries() {
+  return JSON.parse(localStorage.getItem(ENQUIRIES_KEY) || '[]');
+}
+
+function saveEnquiries(enquiries) {
+  localStorage.setItem(ENQUIRIES_KEY, JSON.stringify(enquiries));
+}
+
+function renderStats() {
+  const enquiries = getEnquiries();
+  const now = new Date();
+  const todayStr = now.toDateString();
+  const weekMs = 7 * 24 * 60 * 60 * 1000;
+
+  const total = enquiries.length;
+  const today = enquiries.filter(function (e) {
+    return new Date(e.submittedAt).toDateString() === todayStr;
+  }).length;
+  const thisWeek = enquiries.filter(function (e) {
+    return (now - new Date(e.submittedAt)) <= weekMs;
+  }).length;
+  const contacted = enquiries.filter(function (e) {
+    return e.status === 'Contacted';
+  }).length;
+
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statToday').textContent = today;
+  document.getElementById('statWeek').textContent = thisWeek;
+  document.getElementById('statContacted').textContent = contacted;
+}
+
+/* ============================================================
+   SECTION 2 & 3 — ENQUIRIES TABLE + EXPANDABLE NOTES
+   ============================================================ */
+
+const STATUS_OPTIONS = ['New', 'Contacted', 'Appointment booked', 'Not suitable', 'No response'];
+
+function renderEnquiries() {
+  const wrapper = document.getElementById('enquiriesTableWrapper');
+  const enquiries = getEnquiries().slice().sort(function (a, b) {
+    return new Date(b.submittedAt) - new Date(a.submittedAt);
+  });
+
+  if (enquiries.length === 0) {
+    wrapper.innerHTML = '<p class="empty-state">No enquiries yet. They will appear here as visitors submit the ADHD assessment enquiry form on the homepage — on this device/browser only.</p>';
+    return;
+  }
+
+  const rows = enquiries.map(function (e) {
+    const statusOptionsHtml = STATUS_OPTIONS.map(function (opt) {
+      return '<option value="' + escapeHtml(opt) + '"' + (opt === e.status ? ' selected' : '') + '>' + escapeHtml(opt) + '</option>';
+    }).join('');
+
+    const mainRow =
+      '<tr>' +
+        '<td><button type="button" class="enquiry-row-toggle" onclick="toggleEnquiryRow(\'' + e.id + '\')" aria-label="Show details">▸</button></td>' +
+        '<td>' + escapeHtml(new Date(e.submittedAt).toLocaleString('en-GB')) + '</td>' +
+        '<td>' + escapeHtml(e.fullName) + '</td>' +
+        '<td>' + escapeHtml(e.email) + '</td>' +
+        '<td>' + escapeHtml(e.phone) + '</td>' +
+        '<td>' + escapeHtml(e.assessmentFor) + '</td>' +
+        '<td>' + escapeHtml(e.age) + '</td>' +
+        '<td>' + escapeHtml(e.urgency) + '</td>' +
+        '<td>' + escapeHtml(e.postcode) + '</td>' +
+        '<td><select class="status-select status-' + statusToClass(e.status) + '" onchange="updateStatus(\'' + e.id + '\', this)">' + statusOptionsHtml + '</select></td>' +
+      '</tr>';
+
+    const detailRow =
+      '<tr class="enquiry-detail-row" id="detail-' + e.id + '" style="display:none;">' +
+        '<td colspan="10">' +
+          '<div class="enquiry-detail-grid">' +
+            '<div class="enquiry-detail-item"><span class="label">Who is this for</span><span class="value">' + escapeHtml(e.assessmentFor) + '</span></div>' +
+            '<div class="enquiry-detail-item"><span class="label">Age</span><span class="value">' + escapeHtml(e.age) + '</span></div>' +
+            '<div class="enquiry-detail-item"><span class="label">Symptoms present for</span><span class="value">' + escapeHtml(e.symptomsDuration) + '</span></div>' +
+            '<div class="enquiry-detail-item"><span class="label">Seen a GP</span><span class="value">' + escapeHtml(e.gpStatus) + '</span></div>' +
+            '<div class="enquiry-detail-item"><span class="label">Postcode</span><span class="value">' + escapeHtml(e.postcode) + '</span></div>' +
+            '<div class="enquiry-detail-item"><span class="label">Full name</span><span class="value">' + escapeHtml(e.fullName) + '</span></div>' +
+            '<div class="enquiry-detail-item"><span class="label">Email</span><span class="value">' + escapeHtml(e.email) + '</span></div>' +
+            '<div class="enquiry-detail-item"><span class="label">Phone</span><span class="value">' + escapeHtml(e.phone) + '</span></div>' +
+            '<div class="enquiry-detail-item"><span class="label">How soon</span><span class="value">' + escapeHtml(e.urgency) + '</span></div>' +
+            '<div class="enquiry-detail-item"><span class="label">Heard about us via</span><span class="value">' + escapeHtml(e.hearAbout) + '</span></div>' +
+            '<div class="enquiry-detail-item"><span class="label">Consent given</span><span class="value">' + (e.consent ? 'Yes' : 'No') + '</span></div>' +
+            '<div class="enquiry-detail-item"><span class="label">Enquiry ID</span><span class="value">' + escapeHtml(e.id) + '</span></div>' +
+          '</div>' +
+          '<div class="enquiry-notes">' +
+            '<label for="notes-' + e.id + '">Admin notes</label>' +
+            '<textarea id="notes-' + e.id + '" oninput="updateNotes(\'' + e.id + '\', this)">' + escapeHtml(e.notes || '') + '</textarea>' +
+            '<div class="enquiry-notes-saved" id="saved-' + e.id + '">Saved</div>' +
+          '</div>' +
+        '</td>' +
+      '</tr>';
+
+    return mainRow + detailRow;
+  }).join('');
+
+  wrapper.innerHTML =
+    '<div class="admin-table-scroll">' +
+      '<table class="admin-table">' +
+        '<thead><tr><th></th><th>Received</th><th>Name</th><th>Email</th><th>Phone</th><th>For</th><th>Age</th><th>How soon</th><th>Postcode</th><th>Status</th></tr></thead>' +
+        '<tbody>' + rows + '</tbody>' +
+      '</table>' +
+    '</div>';
+}
+
+// Expands/collapses the detail row under a given enquiry row.
+function toggleEnquiryRow(id) {
+  const row = document.getElementById('detail-' + id);
+  const isHidden = row.style.display === 'none';
+  row.style.display = isHidden ? 'table-row' : 'none';
+}
+
+// Saves the new status immediately to localStorage and recolours the
+// dropdown — done without a full table re-render so open detail rows
+// and typed notes aren't disturbed.
+function updateStatus(id, selectEl) {
+  const enquiries = getEnquiries();
+  const enquiry = enquiries.find(function (e) { return e.id === id; });
+  if (!enquiry) return;
+
+  enquiry.status = selectEl.value;
+  saveEnquiries(enquiries);
+
+  selectEl.className = 'status-select status-' + statusToClass(selectEl.value);
+  renderStats();
+}
+
+// Saves notes as the admin types, without re-rendering the table.
+function updateNotes(id, textareaEl) {
+  const enquiries = getEnquiries();
+  const enquiry = enquiries.find(function (e) { return e.id === id; });
+  if (!enquiry) return;
+
+  enquiry.notes = textareaEl.value;
+  saveEnquiries(enquiries);
+
+  const savedLabel = document.getElementById('saved-' + id);
+  if (savedLabel) {
+    savedLabel.classList.add('show');
+    clearTimeout(savedLabel._hideTimer);
+    savedLabel._hideTimer = setTimeout(function () {
+      savedLabel.classList.remove('show');
+    }, 1200);
+  }
+}
+
+/* ============================================================
+   SECTION 4 — BLOG MANAGEMENT (add / edit / delete)
+   ============================================================ */
 
 function getArticles() {
   return JSON.parse(localStorage.getItem(ARTICLES_KEY) || '[]');
@@ -66,6 +234,10 @@ function getArticles() {
 
 function saveArticles(articles) {
   localStorage.setItem(ARTICLES_KEY, JSON.stringify(articles));
+}
+
+function generateArticleId() {
+  return 'art_' + Date.now() + '_' + Math.random().toString(36).slice(2, 9);
 }
 
 // Turns "My Great Title!" into "my-great-title" for use in a URL.
@@ -77,11 +249,12 @@ function slugify(text) {
     .replace(/(^-|-$)/g, '');
 }
 
-function handleNewArticle(event) {
+function handleArticleForm(event) {
   event.preventDefault();
   const form = event.target;
+  const editingId = form.editingId.value;
 
-  const article = {
+  const articleData = {
     title: form.title.value.trim(),
     slug: form.slug.value.trim() || slugify(form.title.value),
     date: form.date.value,
@@ -91,75 +264,52 @@ function handleNewArticle(event) {
   };
 
   const articles = getArticles();
-  articles.unshift(article);
+
+  if (editingId) {
+    const existing = articles.find(function (a) { return a.id === editingId; });
+    if (existing) {
+      Object.assign(existing, articleData);
+    }
+  } else {
+    articleData.id = generateArticleId();
+    articles.unshift(articleData);
+  }
+
   saveArticles(articles);
-
-  document.getElementById('generatedHtml').value = buildArticleHtml(article);
-  document.getElementById('generatedHtmlWrapper').style.display = 'block';
-
+  cancelEdit();
   renderArticles();
-  form.reset();
 }
 
-// Builds a full standalone HTML page for the article, matching the
-// same template used by the files already in /blog/. Copy the text
-// this produces into a new file named /blog/<slug>.html.
-function buildArticleHtml(article) {
-  const paragraphs = article.content
-    .split(/\n\s*\n/)
-    .map(function (p) { return '      <p>' + escapeHtml(p.trim()) + '</p>'; })
-    .join('\n');
+function editArticle(id) {
+  const articles = getArticles();
+  const article = articles.find(function (a) { return a.id === id; });
+  if (!article) return;
 
-  return '<!DOCTYPE html>\n' +
-'<html lang="en">\n' +
-'<head>\n' +
-'<meta charset="UTF-8">\n' +
-'<meta name="viewport" content="width=device-width, initial-scale=1.0">\n' +
-'<title>' + escapeHtml(article.title) + ' | BookPrivate Blog</title>\n' +
-'<meta name="description" content="' + escapeHtml(article.excerpt) + '">\n' +
-'<meta property="og:title" content="' + escapeHtml(article.title) + '">\n' +
-'<meta property="og:description" content="' + escapeHtml(article.excerpt) + '">\n' +
-'<meta property="og:type" content="article">\n' +
-'<meta property="og:url" content="https://bookprivate.co.uk/blog/' + escapeHtml(article.slug) + '.html">\n' +
-'<link rel="preconnect" href="https://fonts.googleapis.com">\n' +
-'<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n' +
-'<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">\n' +
-'<link rel="stylesheet" href="../css/style.css">\n' +
-'</head>\n' +
-'<body>\n\n' +
-'<!-- NAV -->\n' +
-'<nav>\n' +
-'  <a href="/" class="logo"><span class="logo-book">Book</span><span class="logo-private">Private</span></a>\n' +
-'  <div class="nav-links">\n' +
-'    <a href="/">Home</a>\n' +
-'    <a href="/#how-it-works">How it works</a>\n' +
-'    <a href="/#services">Services</a>\n' +
-'    <a href="/blog/">Blog</a>\n' +
-'    <a href="/clinics/">For Clinics</a>\n' +
-'  </div>\n' +
-'</nav>\n\n' +
-'<!-- ARTICLE -->\n' +
-'<article class="article-page">\n' +
-'  <div class="article-inner">\n' +
-'    <span class="blog-tag">' + escapeHtml(article.category) + '</span>\n' +
-'    <h1>' + escapeHtml(article.title) + '</h1>\n' +
-'    <p class="article-meta">' + escapeHtml(article.date) + '</p>\n' +
-'    <div class="article-body">\n' +
-paragraphs + '\n' +
-'    </div>\n' +
-'    <a href="/blog/" class="article-back">&larr; Back to all articles</a>\n' +
-'  </div>\n' +
-'</article>\n\n' +
-'<!-- FOOTER -->\n' +
-'<footer>\n' +
-'  <a href="/" class="footer-brand"><span class="logo-book">Book</span><span class="logo-private">Private</span></a>\n' +
-'  <div class="footer-meta">\n' +
-'    BookPrivate is a trading name of ClinScale Ltd &nbsp;&middot;&nbsp; ICO Registered<br>\n' +
-'    <a href="mailto:hello@bookprivate.co.uk" style="color: inherit; text-decoration: none;">hello@bookprivate.co.uk</a>\n' +
-'  </div>\n' +
-'</footer>\n\n' +
-'</body>\n' +
-'</html>\n';
+  const form = document.getElementById('articleForm');
+  form.editingId.value = article.id;
+  form.title.value = article.title;
+  form.slug.value = article.slug;
+  form.date.value = article.date;
+  form.category.value = article.category;
+  form.excerpt.value = article.excerpt;
+  form.content.value = article.content;
+
+  document.getElementById('editingNote').style.display = 'block';
+  document.getElementById('articlePanel').scrollIntoView({ behavior: 'smooth' });
+}
+
+function cancelEdit() {
+  const form = document.getElementById('articleForm');
+  form.reset();
+  form.editingId.value = '';
+  document.getElementById('editingNote').style.display = 'none';
+}
+
+function deleteArticle(id) {
+  if (!confirm('Delete this article? This cannot be undone.')) return;
+  const articles = getArticles().filter(function (a) { return a.id !== id; });
+  saveArticles(articles);
+  renderArticles();
 }
 
 function renderArticles() {
@@ -167,56 +317,20 @@ function renderArticles() {
   const articles = getArticles();
 
   if (articles.length === 0) {
-    list.innerHTML = '<p class="empty-state">No articles added here yet. The 3 launch articles already live as files in /blog/ — this list only shows articles you generate from the form above.</p>';
+    list.innerHTML = '<p class="empty-state">No articles added here yet. The 3 launch articles already live as files in /blog/ — this list only shows articles added or edited from this dashboard.</p>';
     return;
   }
 
-  list.innerHTML = articles.map(function (a, i) {
+  list.innerHTML = articles.map(function (a) {
     return '<div class="admin-list-item">' +
       '<div>' +
         '<strong>' + escapeHtml(a.title) + '</strong>' +
         '<div class="admin-list-meta">' + escapeHtml(a.date) + ' &middot; ' + escapeHtml(a.category) + ' &middot; slug: ' + escapeHtml(a.slug) + '</div>' +
       '</div>' +
-      '<button class="admin-delete-btn" onclick="deleteArticle(' + i + ')">Delete</button>' +
+      '<div class="admin-list-actions">' +
+        '<button class="admin-edit-btn" onclick="editArticle(\'' + a.id + '\')">Edit</button>' +
+        '<button class="admin-delete-btn" onclick="deleteArticle(\'' + a.id + '\')">Delete</button>' +
+      '</div>' +
     '</div>';
   }).join('');
-}
-
-function deleteArticle(index) {
-  const articles = getArticles();
-  articles.splice(index, 1);
-  saveArticles(articles);
-  renderArticles();
-}
-
-/* ---------- Homepage registrations ---------- */
-
-function renderSubmissions() {
-  const container = document.getElementById('submissionsList');
-  const submissions = JSON.parse(localStorage.getItem(SUBMISSIONS_KEY) || '[]');
-
-  if (submissions.length === 0) {
-    container.innerHTML = '<p class="empty-state">No registrations yet. They will appear here as visitors submit the homepage form — on this device/browser only.</p>';
-    return;
-  }
-
-  const rows = submissions.slice().reverse().map(function (s) {
-    return '<tr>' +
-      '<td>' + escapeHtml(s.fullName) + '</td>' +
-      '<td>' + escapeHtml(s.email) + '</td>' +
-      '<td>' + escapeHtml(s.phone) + '</td>' +
-      '<td>' + escapeHtml(s.appointmentType) + '</td>' +
-      '<td>' + escapeHtml(s.postcode) + '</td>' +
-      '<td>' + escapeHtml(s.timeframe) + '</td>' +
-      '<td>' + escapeHtml(new Date(s.submittedAt).toLocaleString('en-GB')) + '</td>' +
-    '</tr>';
-  }).join('');
-
-  container.innerHTML =
-    '<div class="admin-table-scroll">' +
-      '<table class="admin-table">' +
-        '<thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Type</th><th>Postcode</th><th>Timeframe</th><th>Submitted</th></tr></thead>' +
-        '<tbody>' + rows + '</tbody>' +
-      '</table>' +
-    '</div>';
 }

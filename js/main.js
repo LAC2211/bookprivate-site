@@ -1,34 +1,63 @@
 /* ============================================================
    BOOKPRIVATE — MAIN SITE SCRIPT
-   Handles the registration form (homepage) and the clinic
-   enquiry form (/clinics). There is no real backend yet, so
-   every submission does two things:
-     1. Saves a copy in the browser's localStorage, so it shows
-        up in the admin dashboard (/admin).
-     2. Opens a pre-filled email to hello@bookprivate.co.uk as a
-        fallback, so nothing gets lost even without a database.
+   Handles two forms:
+     1. The ADHD assessment enquiry form on the homepage — saves
+        straight to localStorage (no email, no external service).
+        Every enquiry becomes visible in the admin dashboard
+        (/admin) with a status you can update and notes you can add.
+     2. The clinic partnership enquiry form on /clinics — this one
+        still uses a simple mailto fallback, since it's a low-volume
+        B2B enquiry rather than a patient lead we need to manage.
    ============================================================ */
 
-const REGISTRATION_STORAGE_KEY = 'bookprivate_submissions';
+const ENQUIRIES_KEY = 'bookprivate_enquiries';
 const CONTACT_EMAIL = 'hello@bookprivate.co.uk';
 
-// Save a registration to localStorage so /admin can list it later.
-function saveSubmission(data) {
-  const existing = JSON.parse(localStorage.getItem(REGISTRATION_STORAGE_KEY) || '[]');
-  existing.push(data);
-  localStorage.setItem(REGISTRATION_STORAGE_KEY, JSON.stringify(existing));
+/* ---------- ADHD enquiry form (homepage) ---------- */
+
+// Generates a short, unique-enough ID for each enquiry, e.g. "enq_1732000000_a1b2c3".
+function generateEnquiryId() {
+  return 'enq_' + Date.now() + '_' + Math.random().toString(36).slice(2, 9);
 }
 
-// Open the visitor's email client with the details pre-filled.
-function openMailto(subject, bodyLines) {
-  const body = bodyLines.join('\n');
-  const url = 'mailto:' + CONTACT_EMAIL +
-    '?subject=' + encodeURIComponent(subject) +
-    '&body=' + encodeURIComponent(body);
-  window.location.href = url;
+function getEnquiries() {
+  return JSON.parse(localStorage.getItem(ENQUIRIES_KEY) || '[]');
 }
 
-// Swap a submitted form out for its "thank you" message.
+function saveEnquiries(enquiries) {
+  localStorage.setItem(ENQUIRIES_KEY, JSON.stringify(enquiries));
+}
+
+function handleEnquirySubmit(event) {
+  event.preventDefault();
+  const form = event.target;
+
+  const enquiry = {
+    id: generateEnquiryId(),
+    submittedAt: new Date().toISOString(),
+    status: 'New',
+    notes: '',
+    assessmentFor: form.assessmentFor.value,
+    age: form.age.value.trim(),
+    symptomsDuration: form.symptomsDuration.value,
+    gpStatus: form.gpStatus.value,
+    postcode: form.postcode.value.trim(),
+    fullName: form.fullName.value.trim(),
+    email: form.email.value.trim(),
+    phone: form.phone.value.trim(),
+    urgency: form.urgency.value,
+    hearAbout: form.hearAbout.value,
+    consent: form.consent.checked
+  };
+
+  const enquiries = getEnquiries();
+  enquiries.push(enquiry);
+  saveEnquiries(enquiries);
+
+  showThankYou(form);
+}
+
+// Swaps a submitted form out for its "thank you" message.
 // Expects the form to be wrapped in <div class="form-wrapper">...</div>
 // containing a sibling element with class "thank-you-message".
 function showThankYou(form) {
@@ -38,39 +67,16 @@ function showThankYou(form) {
   if (message) message.style.display = 'block';
 }
 
-// Handles both registration forms on the homepage (hero + bottom CTA).
-// The "source" argument just records which form was used, for context.
-function handleRegister(event, source) {
-  event.preventDefault();
-  const form = event.target;
+/* ---------- Clinic partnership enquiry form (/clinics) ---------- */
 
-  const data = {
-    source: source,
-    fullName: form.fullName.value.trim(),
-    email: form.email.value.trim(),
-    phone: form.phone.value.trim(),
-    appointmentType: form.appointmentType.value,
-    postcode: form.postcode.value.trim(),
-    timeframe: form.timeframe.value,
-    submittedAt: new Date().toISOString()
-  };
-
-  saveSubmission(data);
-
-  openMailto('New BookPrivate registration', [
-    'Name: ' + data.fullName,
-    'Email: ' + data.email,
-    'Phone: ' + data.phone,
-    'Appointment type: ' + data.appointmentType,
-    'Postcode: ' + data.postcode,
-    'Preferred timeframe: ' + data.timeframe,
-    'Form location: ' + data.source
-  ]);
-
-  showThankYou(form);
+function openMailto(subject, bodyLines) {
+  const body = bodyLines.join('\n');
+  const url = 'mailto:' + CONTACT_EMAIL +
+    '?subject=' + encodeURIComponent(subject) +
+    '&body=' + encodeURIComponent(body);
+  window.location.href = url;
 }
 
-// Handles the clinic partnership enquiry form on /clinics.
 function handleClinicEnquiry(event) {
   event.preventDefault();
   const form = event.target;
